@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarization with Feedback</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Text Summarization with Feedback Loop</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="text">Enter text to summarize or analyze:</label>
+                <textarea class="form-control" id="text" name="text" rows="6" required>{{ request.form.get('text', '') }}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <button type="submit" name="generate_short" class="btn btn-primary btn-block">Short Summarize</button>
+                </div>
+                <div class="form-group col-md-4">
+                    <button type="submit" name="generate_long" class="btn btn-secondary btn-block">Long Summarize</button>
+                </div>
+                <div class="form-group col-md-4">
+                    <button type="submit" name="analyze_tone" class="btn btn-info btn-block">Analyze Tone & Sentiment</button>
+                </div>
+            </div>
+
+            {% if short_summary_output %}
+            <h2 class="mt-4">Short Summary</h2>
+            <pre>{{ short_summary_output }}</pre>
+            <h3>Short Summary Feedback</h3>
+            <div class="form-group">
+                <label for="short_feedback">Select feedback for short summary:</label>
+                <select class="form-control" id="short_feedback" name="short_feedback">
+                    {% for option in feedback_options %}
+                    <option>{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" id="custom_short_feedback_div" style="display:none;">
+                <label for="custom_short_feedback">Please specify your feedback:</label>
+                <input type="text" class="form-control" id="custom_short_feedback" name="custom_short_feedback">
+            </div>
+            <button type="submit" name="update_short_summary" class="btn btn-warning">Update Short Summary Prompt</button>
+            {% endif %}
+
+            {% if long_summary_output %}
+            <h2 class="mt-4">Long Summary</h2>
+            <pre>{{ long_summary_output }}</pre>
+            <h3>Long Summary Feedback</h3>
+            <div class="form-group">
+                <label for="long_feedback">Select feedback for long summary:</label>
+                <select class="form-control" id="long_feedback" name="long_feedback">
+                    {% for option in feedback_options %}
+                    <option>{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" id="custom_long_feedback_div" style="display:none;">
+                <label for="custom_long_feedback">Please specify your feedback:</label>
+                <input type="text" class="form-control" id="custom_long_feedback" name="custom_long_feedback">
+            </div>
+            <button type="submit" name="update_long_summary" class="btn btn-warning">Update Long Summary Prompt</button>
+            {% endif %}
+
+            {% if tone_output %}
+            <h2 class="mt-4">Tone and Sentiment Analysis</h2>
+            <pre>{{ tone_output }}</pre>
+            {% endif %}
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#short_feedback').change(function() {
+                if ($(this).val() == 'Other (Please specify)') {
+                    $('#custom_short_feedback_div').show();
+                } else {
+                    $('#custom_short_feedback_div').hide();
+                }
+            });
+
+            $('#long_feedback').change(function() {
+                if ($(this).val() == 'Other (Please specify)') {
+                    $('#custom_long_feedback_div').show();
+                } else {
+                    $('#custom_long_feedback_div').hide();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
